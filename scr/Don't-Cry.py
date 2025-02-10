@@ -310,7 +310,7 @@ def disable_all():
     disable_task_manager()
 
 
-dev_mode = True
+dev_mode = False
 if __name__ == "__main__":
     if not dev_mode:
         if not check_connection():

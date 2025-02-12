@@ -77,7 +77,7 @@ def decrypt_file(path, key, chunk_size=268435456):
 def decrypt_directory(directory_path, key):
     with ThreadPoolExecutor(max_workers=8) as executor:
         futures = []
-        for root, _, files in os.walk(directory):
+        for root, _, files in os.walk(directory_path):
             for file in files:
                 if not os.path.splitext(file)[1].lower() in files_targeted:
                     continue

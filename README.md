@@ -1,4 +1,4 @@
-# Don't-Cry Ransomware
+# **Don't-Cry Ransomware**
 **Ransomware using python 💀💀💀**
 
 ## **Usage**  

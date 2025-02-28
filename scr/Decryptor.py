@@ -100,7 +100,7 @@ def decrypt_directory(directory_path, key):
         futures = []
         for root, _, files in os.walk(directory_path):
             for file in files:
-                if os.path.splitext(file)[1].lower() != ".dcry":
+                if os.path.splitext(file)[1] != ".dcry":
                     continue
                 file_path = os.path.join(root, file)
                 futures.append(executor.submit(decrypt_file, file_path, key))

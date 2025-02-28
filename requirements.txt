@@ -1,4 +1,5 @@
 pyzipper == 0.3.6
+colorama == 0.4.6
 requests == 2.32.3
 winshell == 0.6
 cryptography == 43.0.3

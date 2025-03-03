@@ -189,7 +189,7 @@ def start_encryption():
 def encrypt_file(path, key, chunk_size=268435456):
     try:
         MAGIC = b"DCRY$"
-        with open(path, "r+b") as f:
+        with open(path, "r+b", buffering=-1) as f:
             file_size = os.path.getsize(path)
             f.seek(0)
             f.write(MAGIC)

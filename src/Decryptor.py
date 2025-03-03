@@ -71,20 +71,17 @@ def start_decryption():
 def decrypt_file(path, key, chunk_size=268435456):
     try:
         MAGIC = b"DCRY$"
-        with open(path, "r+b", buffering=-1) as f:
-            header = f.read(len(MAGIC))
+        decrypted_path = os.path.splitext(path)[0]
+        cipher = Fernet(key)
+        with open(path, "rb") as f_in:
+            header = f_in.read(len(MAGIC))
             if header != MAGIC:
                 return
-            file_size = os.path.getsize(path)
-            cipher = Fernet(key)
-            offset = len(MAGIC)
-            while (chunk := f.read(chunk_size)):
-                decrypted_chunk = cipher.decrypt(chunk)
-                f.seek(offset)
-                f.write(decrypted_chunk)
-                offset += len(chunk)
-            f.seek(0)
-        os.rename(path, os.path.splitext(path)[0])
+            with open(decrypted_path, "wb") as f_out:
+                while chunk := f_in.read(chunk_size):
+                    decrypted_chunk = cipher.decrypt(chunk)
+                    f_out.write(decrypted_chunk)
+        os.remove(path)
     except InvalidToken:
         print(f"\n{Fore.LIGHTRED_EX}Invalid token")
         input("Press enter to exit...")

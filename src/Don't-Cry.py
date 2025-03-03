@@ -193,6 +193,7 @@ def encrypt_file(path, key, chunk_size=268435456):
             file_size = os.path.getsize(path)
             f.seek(0)
             f.write(MAGIC)
+            cipher = Fernet(key=key)
             offset = len(MAGIC)
             while (chunk := f.read(chunk_size)):
                 encrypted_chunk = cipher.encrypt(chunk)

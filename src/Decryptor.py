@@ -71,7 +71,7 @@ def start_decryption():
 def decrypt_file(path, key, chunk_size=268435456):
     try:
         MAGIC = b"DCRY$"
-        with open(path, "r", buffering=-1) as f:
+        with open(path, "r+b", buffering=-1) as f:
             header = f.read(len(MAGIC))
             if header != MAGIC:
                 return
@@ -79,9 +79,9 @@ def decrypt_file(path, key, chunk_size=268435456):
             cipher = Fernet(key)
             offset = len(MAGIC)
             while (chunk := f.read(chunk_size)):
-                encrypted_chunk = cipher.encrypt(chunk)
+                decrypted_chunk = cipher.decrypt(chunk)
                 f.seek(offset)
-                f.write(encrypted_chunk)
+                f.write(decrypted_chunk)
                 offset += len(chunk)
             f.seek(0)
         os.rename(path, os.path.splitext(path)[0])

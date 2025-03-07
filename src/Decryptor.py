@@ -6,11 +6,13 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 
 import winshell
+import threading
 from colorama import Fore, init
 from cryptography.fernet import Fernet, InvalidToken
 
 init(autoreset=True)
 
+stop_flag = threading.Event()
 baner = rf""" {Fore.LIGHTRED_EX} _______                     __   __             ______                      
  |       \                   |  \ |  \           /      \                     
  | $$$$$$$\  ______   _______| $$_| $$_         |  $$$$$$\  ______   __    __ 
@@ -69,6 +71,8 @@ def start_decryption():
 
 
 def decrypt_file(path, key, chunk_size=268435456):
+    if stop_flag.is_set():
+        return
     try:
         MAGIC = b"DCRY$"
         decrypted_path = os.path.splitext(path)[0]
@@ -83,6 +87,7 @@ def decrypt_file(path, key, chunk_size=268435456):
                     f_out.write(decrypted_chunk)
         os.remove(path)
     except InvalidToken:
+        stop_flag.set()
         print(f"\n{Fore.LIGHTRED_EX}Invalid token")
         input("Press enter to exit...")
         sys.exit(2)

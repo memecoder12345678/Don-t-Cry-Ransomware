@@ -248,7 +248,7 @@ def change_wallpaper():
             "Wallpaper",
             0,
             winreg.REG_SZ,
-            r"C:\windows\web\wallpaper\windows\byne.png",
+            r"C:\windows\web\wallpaper\windows\DCRY.png",
         )
 
 

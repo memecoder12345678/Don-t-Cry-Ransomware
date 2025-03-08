@@ -1,3 +1,4 @@
+import base64
 import ctypes
 import hashlib
 import os
@@ -6,14 +7,11 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 
 import winshell
-import threading
 from colorama import Fore, init
-from cryptography.fernet import Fernet, InvalidToken
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 init(autoreset=True)
 
-error_printed = threading.Lock()
-stop_flag = threading.Event()
 baner = rf""" {Fore.LIGHTRED_EX} _______                     __   __             ______                      
  |       \                   |  \ |  \           /      \                     
  | $$$$$$$\  ______   _______| $$_| $$_         |  $$$$$$\  ______   __    __ 
@@ -33,7 +31,7 @@ try:
     print("\033[2J\033[H", end="")
     print(baner)
     print()
-    key = bytes(input("Enter a key: ").strip().encode())
+    key = bytes(base64.urlsafe_b64decode(input("Enter a key: ").strip().encode()))
 except KeyboardInterrupt:
     exit(1)
 
@@ -72,28 +70,17 @@ def start_decryption():
 
 
 def decrypt_file(path, key, chunk_size=268435456):
-    if stop_flag.is_set():
-        return
     try:
         MAGIC = b"DCRY$"
         decrypted_path = os.path.splitext(path)[0]
-        cipher = Fernet(key)
-        with open(path, "rb") as f_in:
-            header = f_in.read(len(MAGIC))
-            if header != MAGIC:
+        cipher = AESGCM(key)
+        with open(path, "rb") as f_in, open(decrypted_path, "wb") as f_out:
+            if f_in.read(len(MAGIC)) != MAGIC:
                 return
-            with open(decrypted_path, "wb") as f_out:
-                while chunk := f_in.read(chunk_size):
-                    decrypted_chunk = cipher.decrypt(chunk)
-                    f_out.write(decrypted_chunk)
+            while nonce := f_in.read(12):
+                if chunk := f_in.read(chunk_size):
+                    f_out.write(cipher.decrypt(nonce, chunk, None))
         os.remove(path)
-    except InvalidToken:
-        with error_printed:
-            if not stop_flag.is_set():
-                print(f"\n{Fore.LIGHTRED_EX}Invalid token")
-                input("Press enter to exit...")
-            stop_flag.set()
-        sys.exit(2)
     except Exception as e:
         print(f"\n{Fore.LIGHTRED_EX}Error decrypting {path}: {e}")
         return

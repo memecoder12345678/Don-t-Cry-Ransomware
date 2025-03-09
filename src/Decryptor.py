@@ -68,7 +68,7 @@ def start_decryption():
         if bitmask & (1 << i)
     ]:
         if disk[:2] != os.getenv("SystemDrive") and disk[:2] != os.getenv("HOMEDRIVE"):
-            encrypt_directory(disk, key)
+            decrypt_directory(disk, key)
 
 
 def decrypt_file(path, key, chunk_size=268435456):

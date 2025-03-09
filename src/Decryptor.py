@@ -39,7 +39,7 @@ except KeyboardInterrupt:
 def is_valid_key(key):
     try:
         key_file = os.path.join(os.environ["USERPROFILE"], "key")
-        if not key or not os.path.exists(key_file):
+        if not key or len(key) != 16 or not os.path.exists(key_file):
             return False
         with open(key_file, "r") as f:
             return f.read() == hashlib.sha256(key).hexdigest()

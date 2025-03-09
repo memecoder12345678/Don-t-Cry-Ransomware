@@ -31,7 +31,7 @@ try:
     print("\033[2J\033[H", end="")
     print(baner)
     print()
-    key = base64.urlsafe_b64decode(input("Enter a key: ").strip().encode())[10:]
+    key = bytes(base64.urlsafe_b64decode(input("Enter a key: ").strip())[10:])
 except KeyboardInterrupt:
     exit(1)
 

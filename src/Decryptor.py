@@ -108,6 +108,12 @@ def main():
             os.remove(shortcut_path)
         except:
             pass
+    key_path = os.path.join(os.environ["USERPROFILE"], "key")
+    if os.path.exists(key_path):
+        try:
+            os.remove(key_path)
+        except:
+            pass
 
 
 if __name__ == "__main__":

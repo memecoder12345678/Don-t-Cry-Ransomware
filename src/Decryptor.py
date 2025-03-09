@@ -78,7 +78,6 @@ def decrypt_file(path, key, chunk_size=268435456):
 
         with open(path, "rb") as f_in, open(decrypted_path, "wb") as f_out:
             if f_in.read(len(MAGIC)) != MAGIC:
-                print(f"{Fore.LIGHTRED_EX}Invalid file format: {path}")
                 return
             while True:
                 nonce = f_in.read(12)

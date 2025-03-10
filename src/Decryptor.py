@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import winshell
 from colorama import Fore, init
-from file import decrypt_file
+from EDFile import decrypt_file
 
 init(autoreset=True)
 

@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import winshell
 from colorama import Fore, init
-from Crypto.Cipher import AES
+from file import decrypt_file
 
 init(autoreset=True)
 
@@ -69,38 +69,6 @@ def start_decryption():
     ]:
         if disk[:2] != os.getenv("SystemDrive") and disk[:2] != os.getenv("HOMEDRIVE"):
             decrypt_directory(disk, key)
-
-
-def decrypt_file(path, key, chunk_size=268435456):
-    try:
-        MAGIC = b"DCRY$"
-        decrypted_path = os.path.splitext(path)[0]
-
-        with open(path, "rb") as f_in, open(decrypted_path, "wb") as f_out:
-            if f_in.read(len(MAGIC)) != MAGIC:
-                return
-            while True:
-                nonce = f_in.read(12)
-                if not nonce:
-                    break
-                tag = f_in.read(16)
-                if not tag:
-                    print(f"{Fore.LIGHTRED_EX}File corrupted - Missing tag: {path}")
-                    return
-                encrypted_chunk = f_in.read(chunk_size)
-                if not encrypted_chunk:
-                    print(f"{Fore.LIGHTRED_EX}File corrupted - Missing encrypted data: {path}")
-                    return
-                cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
-                try:
-                    decrypted_chunk = cipher.decrypt_and_verify(encrypted_chunk, tag)
-                    f_out.write(decrypted_chunk)
-                except ValueError:
-                    print(f"{Fore.LIGHTRED_EX}Authentication failed for {path} - File may be tampered!")
-                    return
-        os.remove(path)
-    except Exception as e:
-        print(f"\n{Fore.LIGHTRED_EX}Error decrypting {path}: {e}")
 
 
 def decrypt_directory(directory_path, key):

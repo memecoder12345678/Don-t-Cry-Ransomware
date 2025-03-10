@@ -7,8 +7,8 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 
 import winshell
-from colorama import Fore, init
 from Crypto.Cipher import AES
+from colorama import Fore, init
 from EDFile import decrypt_file
 
 init(autoreset=True)

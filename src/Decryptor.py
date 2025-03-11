@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 import winshell
 from Crypto.Cipher import AES
 from colorama import Fore, init
-from EDFile import decrypt_file
+from file_crypto import decrypt_file
 
 init(autoreset=True)
 

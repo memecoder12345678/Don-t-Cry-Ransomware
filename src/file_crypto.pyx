@@ -16,6 +16,7 @@ def decrypt_file(str path, bytes key, int chunk_size=268435456):
         char* magic_buffer = <char*> malloc(len(MAGIC))
         size_t read_size
         const unsigned char[:] decrypted_view
+    success = False
     if not f_in or not f_out:
         print(f"{Fore.LIGHTRED_EX}Error opening file: {path}")
         return
@@ -44,12 +45,14 @@ def decrypt_file(str path, bytes key, int chunk_size=268435456):
             except ValueError:
                 print(f"{Fore.LIGHTRED_EX}Authentication failed for {path} - File may be tampered!")
                 return
-        fclose(f_in)
-        fclose(f_out)
-        remove(path.encode())
+        success = True
     except Exception as e:
         print(f"{Fore.LIGHTRED_EX}Error decrypting {path}: {e}")
     finally:
+        if f_in: fclose(f_in)
+        if f_out: fclose(f_out)
+        if success:
+            remove(path.encode())
         free(magic_buffer)
         free(nonce)
         free(tag)
@@ -69,6 +72,7 @@ def encrypt_file(str path, bytes key, int chunk_size=268435456):
         const unsigned char[:] encrypted_view
         const unsigned char[:] nonce_view
         const unsigned char[:] tag_view
+    success = False
     if not f_in or not f_out:
         return
     try:
@@ -86,11 +90,13 @@ def encrypt_file(str path, bytes key, int chunk_size=268435456):
             fwrite(<char*>&nonce_view[0], 1, 12, f_out)
             fwrite(<char*>&tag_view[0], 1, 16, f_out)
             fwrite(<char*>&encrypted_view[0], 1, len(encrypted_chunk), f_out)
-        fclose(f_in)
-        fclose(f_out)
-        remove(path.encode())
+        success = True
     except Exception as e:
         print(f"Error encrypting {path}: {e}")
     finally:
+        if f_in: fclose(f_in)
+        if f_out: fclose(f_out)
+        if success:
+            remove(path.encode())
         free(nonce)
         free(buffer)

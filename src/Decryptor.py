@@ -1,9 +1,9 @@
+import os
+import sys
 import base64
 import ctypes
-import hashlib
-import os
 import string
-import sys
+import hashlib
 from concurrent.futures import ThreadPoolExecutor
 
 import winshell

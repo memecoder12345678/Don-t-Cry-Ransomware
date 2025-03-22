@@ -1,13 +1,13 @@
+import os
+import sys
+import uuid
+import zlib
 import base64
+import string
+import winreg
 import ctypes
 import hashlib
-import uuid
-import os
-import string
 import subprocess
-import sys
-import winreg
-import zlib
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 
@@ -15,8 +15,8 @@ import requests
 import winshell
 from Crypto.Cipher import AES
 from file_crypto import encrypt_file
-from discord_webhook import DiscordEmbed, DiscordWebhook
 from win32com.client import Dispatch
+from discord_webhook import DiscordEmbed, DiscordWebhook
 
 YOUR_WEBHOOK_URL = ""
 id = ""
